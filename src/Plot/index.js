@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import * as d3 from 'd3';
+import {v4 as uuid} from 'uuid';
 
 import useMousePosition from '../MouseTracker';
 import './Plot.css';
@@ -11,6 +12,7 @@ function Plot({width, height}) {
   const {time, x, y} = position;
   const [track, setTrack] = useState([]);
   const hasMovedCursor = typeof x === "number" && typeof y === "number";
+  const id = uuid();
 
   const xScale = d3.scaleLinear()
     .domain([0, width])
@@ -20,11 +22,19 @@ function Plot({width, height}) {
     .domain([0, height])
     .range([axisTicks / 2, -axisTicks / 2]);
 
-  const xs = xScale(x);
-  const ys = yScale(y);
+  const xs = xScale(x || 0).toFixed(2);
+  const ys = yScale(y || 0).toFixed(2);
 
   const sendTrack = () => {
     console.log(track);
+    fetch('http://localhost:8000', {
+      headers: {"Content-Type": "application/json"},
+      method: "POST",
+      body: JSON.stringify({
+        'id': `${track[0].time}-${id}`,
+        'tracks': track,
+      }),
+    });
   }
 
   useEffect(() => {
@@ -62,7 +72,7 @@ function Plot({width, height}) {
         <div style={innerStyle}>
           <div className='msg'>
             {hasMovedCursor
-              ? `Your cursor is at ${x}, ${y}. (${time})`
+              ? `Your cursor is at (${xs}, ${ys}))`
               : "Move your mouse around."}
           </div>
           <P
