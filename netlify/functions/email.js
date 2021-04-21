@@ -44,7 +44,7 @@ exports.handler = async event => {
     console.log(e);
     return {
       statusCode: 500,
-      body: e.mssage
+      body: e.message
     };
   }
 };

@@ -20,21 +20,29 @@ function Plot({width, height}) {
     .domain([0, height])
     .range([axisTicks / 2, -axisTicks / 2]);
 
+  const xs = xScale(x);
+  const ys = yScale(y);
+
+  const sendTrack = () => {
+    console.log(track);
+  }
+
   useEffect(() => {
     if (clicked) {
-      console.log(track);
+      sendTrack()
       setTrack([]);
     } else {
       const newPoint = {
         time,
-        x: xScale(x),
-        y: yScale(y),
+        x: xs,
+        y: ys,
       }
       if (hasMovedCursor) {
         setTrack(t => [...t, newPoint])
       }
     }
-  }, [clicked, time, x, y, hasMovedCursor]);
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [clicked, time, xs, ys]);
 
 
   const outerStyle = {
